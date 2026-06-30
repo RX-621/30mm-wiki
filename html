@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30 MINUTES 系列百科 - 30MM / 30MS / 30MF 产品数据库</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-light: #666;
+    --border: #e5e7eb;
+    --mm: #4A90D9;
+    --ms: #D94A90;
+    --mf: #D98E4A;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 24px rgba(0,0,0,0.1);
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--mm); }
+  .logo .ms { color: var(--ms); }
+  .logo .mf { color: var(--mf); }
+  .search-bar {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    font-size: 0.95rem;
+    background: var(--bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-bar input:focus {
+    outline: none;
+    border-color: #aaa;
+    box-shadow: 0 0 0 3px rgba(74,144,217,0.1);
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 1rem;
+  }
+  .controls {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-chip {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    color: var(--text-light);
+  }
+  .filter-chip:hover { border-color: #ccc; }
+  .filter-chip.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .filter-chip.all.active { background: var(--text); }
+  .filter-chip.mm.active { background: var(--mm); border-color: var(--mm); }
+  .filter-chip.ms.active { background: var(--ms); border-color: var(--ms); }
+  .filter-chip.mf.active { background: var(--mf); border-color: var(--mf); }
+  .sub-filters {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sub-chip {
+    padding: 4px 12px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-light);
+  }
+  .sub-chip:hover { border-color: #bbb; }
+  .sub-chip.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .stats-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 16px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+  .grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+  .card-img-wrap {
+    position: relative;
+    aspect-ratio: 1/1;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.04); }
+  .placeholder-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eee, #ddd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+  .series-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+  .badge-mm { background: var(--mm); }
+  .badge-ms { background: var(--ms); }
+  .badge-mf { background: var(--mf); }
+  .card-body {
+    padding: 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .card-meta {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-price {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    background: var(--bg);
+    color: var(--text-light);
+    margin-top: 6px;
+  }
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-header {
+    position: relative;
+    aspect-ratio: 1/1;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: #fff; }
+  .modal-body {
+    padding: 24px;
+  }
+  .modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .modal-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 16px;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .info-item {
+    background: var(--bg);
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+  .info-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .modal-section {
+    margin-bottom: 16px;
+  }
+  .modal-section h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .modal-section p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.7;
+  }
+  .related-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .related-chip {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .related-chip:hover { background: var(--border); }
+  .modal-footer {
+    padding: 0 24px 24px;
+  }
+  .external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: var(--text);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .external-link:hover { background: #333; }
+  @media (max-width: 640px) {
+    .header-inner { padding: 12px 16px; }
+    .controls { padding: 12px 16px; }
+    .grid { padding: 0 16px 32px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .search-bar { max-width: none; width: 100%; order: 3; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--text-light); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span>30</span><span class="ms">MINUTES</span> 百科
+    </div>
+    <div class="search-bar">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="search" placeholder="搜索产品名称、编号..." autocomplete="off">
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="filter-chip all active" data-series="all">全部</div>
+  <div class="filter-chip mm" data-series="30MM">30MM</div>
+  <div class="filter-chip ms" data-series="30MS">30MS</div>
+  <div class="filter-chip mf" data-series="30MF">30MF</div>
+  <div class="filter-chip" data-filter="upcoming">即将发售</div>
+  <div class="filter-chip" data-filter="accessory">配件</div>
+</div>
+
+<div class="sub-filters" id="subFilters"></div>
+
+<div class="stats-bar" id="stats">加载中...</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header" id="modalHeader">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>30 MINUTES 系列百科 - 数据仅供参考，以官方发售信息为准</p>
+  <p>产品图片版权归 BANDAI SPIRITS 所有 | <a href="https://bandaihobby.net" target="_blank">万代 Hobby 官网</a></p>
+</div>
+
+<script>
+// ============================================================
+// 产品数据 - 方便后续添加/更新
+// 格式说明：
+//   id: 唯一标识（建议用系列前缀+编号）
+//   name: 产品名称
+//   series: 系列（30MM/30MS/30MF）
+//   category: 分类（机体/配件/素体/武装/骑士/巫师/道具等）
+//   price: 日元含税价格（数字）
+//   releaseDate: 发售日期（YYYY-MM或YYYY-MM-DD）
+//   image: 图片URL（空字符串则用占位符）
+//   description: 描述
+//   related: 关联产品ID数组
+//   scale: 比例（如 1/144）
+//   color: 配色/标签
+// ============================================================
+const PRODUCTS = [
+  // ==================== 30MM ====================
+  { id:"mm01", name:"eEXM-15 阿鲁托", series:"30MM", category:"机体", price:1408, releaseDate:"2019-07", image:"images/mm01.jpg", description:"30MM系列首款基础机体，地球联合军泛用量产型EXM。具备丰富的扩展接口和3mm连接孔，可与其他30MM系列机体互换零件。", related:["mm02","mm03","mm15"], scale:"1/144", color:"白色" },
+  { id:"mm02", name:"eEXM-17 奥鲁托（紫色）", series:"30MM", category:"机体", price:1408, releaseDate:"2020-01", image:"images/mm02.jpg", description:"奥鲁托的紫色配色版本，属于地球联合军。附带轻机枪、有线制导设备、背包、指虎和标识贴纸。", related:["mm01","mm03"], scale:"1/144", color:"紫色" },
+  { id:"mm03", name:"eEXM-17 奥鲁托（深灰色）", series:"30MM", category:"机体", price:1408, releaseDate:"2019-12", image:"images/mm03.jpg", description:"奥鲁托的深灰色量产版本，地球联合军配色。基本结构与紫色版相同，仅配色差异。", related:["mm01","mm02"], scale:"1/144", color:"深灰色" },
+  { id:"mm04", name:"eEXM-21 拉比奥特（海军蓝）", series:"30MM", category:"机体", price:1518, releaseDate:"2021-01", image:"images/mm04.jpg", description:"地球联合军eEXM-21拉比奥特以海军蓝色登场。附带霰弹枪、背包、标识贴纸。", related:["mm05","mm06"], scale:"1/144", color:"海军蓝" },
+  { id:"mm05", name:"eEXM-21 拉比奥特（绿色）", series:"30MM", category:"机体", price:1518, releaseDate:"2021-01", image:"images/mm05.jpg", description:"拉比奥特的森林绿色配色版本，适合丛林作战场景。", related:["mm04","mm06"], scale:"1/144", color:"绿色" },
+  { id:"mm06", name:"eEXM-21 拉比奥特（橙色）", series:"30MM", category:"机体", price:1518, releaseDate:"2021-01", image:"images/mm06.jpg", description:"拉比奥特的橙色配色版本，高识别度机体配色。", related:["mm04","mm05"], scale:"1/144", color:"橙色" },
+  { id:"mm07", name:"bEXM-14 夏多亚", series:"30MM", category:"机体", price:1408, releaseDate:"2019-10", image:"images/mm07.jpg", description:"夏多亚是30MM系列早期机体之一，拥有独特的腿部装甲设计。", related:["mm08"], scale:"1/144", color:"绿色" },
+  { id:"mm08", name:"bEXM-14 夏多亚（沙漠色）", series:"30MM", category:"机体", price:1408, releaseDate:"2020-04", image:"images/mm08.jpg", description:"夏多亚的沙漠作战配色版本，适合干旱地区部署。", related:["mm07"], scale:"1/144", color:"沙色" },
+  { id:"mm09", name:"bEXM-15 波尔塔诺瓦", series:"30MM", category:"机体", price:1408, releaseDate:"2020-02", image:"images/mm09.jpg", description:"30MM系列机体，具有装甲厚重的外观和丰富的挂载点。", related:["mm10"], scale:"1/144", color:"深灰色" },
+  { id:"mm10", name:"bEXM-15 波尔塔诺瓦（宇宙规格）", series:"30MM", category:"机体", price:1408, releaseDate:"2020-09", image:"images/mm10.jpg", description:"波尔塔诺瓦的宇宙战规格版本，背部增加了大型推进器。", related:["mm09"], scale:"1/144", color:"白色" },
+  { id:"mm11", name:"EXM-A9k 斯匹纳提", series:"30MM", category:"机体", price:1408, releaseDate:"2020-06", image:"images/mm11.jpg", description:"斯匹纳提是30MM系列中近战特化型机体，配备光束军刀。", related:["mm12","mm13"], scale:"1/144", color:"红色" },
+  { id:"mm12", name:"EXM-A9k 斯匹纳提（骑士规格）", series:"30MM", category:"机体", price:1518, releaseDate:"2022-11", image:"images/mm12.jpg", description:"斯匹纳提的骑士规格版本，增加了肩部装甲和大型剑。", related:["mm11","mm13"], scale:"1/144", color:"红色" },
+  { id:"mm13", name:"EXM-A9rk 斯匹纳提（皇家骑士型）", series:"30MM", category:"机体", price:2068, releaseDate:"2025-02", image:"images/mm13.jpg", description:"斯匹纳提的高端版本，皇家骑士型。全新造型的豪华装备版本。", related:["mm11","mm12"], scale:"1/144", color:"红色" },
+  { id:"mm14", name:"eEXM-29 塞勒姆", series:"30MM", category:"机体", price:1600, releaseDate:"2021-06", image:"images/mm14.jpg", description:"塞勒姆是后期推出的新型机体，设计更加现代化。", related:[], scale:"1/144", color:"白色" },
+  { id:"mm15", name:"配件套组1", series:"30MM", category:"配件", price:660, releaseDate:"2020-02", image:"images/mm15.jpg", description:"包含新武器、附加装备、爆炸反应装甲等众多能够拓展改造空间的装备。多种武器均可进一步换装改造。", related:["mm01"], scale:"1/144", color:"-" },
+  { id:"mm16", name:"配件套组2（多连装导弹/长距离狙击手步枪）", series:"30MM", category:"配件", price:660, releaseDate:"2029-06", image:"images/mm16.jpg", description:"包含多连装导弹和超长距离狙击手步枪等远程攻击装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm17", name:"配件套组3（高机动型/高机动型背包）", series:"30MM", category:"配件", price:660, releaseDate:"2020-09", image:"images/mm17.jpg", description:"高机动型装备套装，增加机体机动性和速度。", related:[], scale:"1/144", color:"-" },
+  { id:"mm18", name:"配件套组4（轨道型/侦察型）", series:"30MM", category:"配件", price:660, releaseDate:"2020-12", image:"images/mm18.jpg", description:"轨道型和侦察型装备套装，适合远程侦查和支援作战。", related:[], scale:"1/144", color:"-" },
+  { id:"mm19", name:"配件套组5（多旋翼/大推力推进器）", series:"30MM", category:"配件", price:660, releaseDate:"2021-03", image:"images/mm19.jpg", description:"多旋翼和大推力推进器装备套装，实现飞行和悬浮功能。", related:[], scale:"1/144", color:"-" },
+  { id:"mm20", name:"配件套组6（自定义头型A/B）", series:"30MM", category:"配件", price:660, releaseDate:"2021-06", image:"images/mm20.jpg", description:"自定义头部零件套装，可更换头部造型以个性化机体。", related:[], scale:"1/144", color:"-" },
+  { id:"mm21", name:"配件套组7（装甲盾牌/装备）", series:"30MM", category:"配件", price:660, releaseDate:"2021-09", image:"images/mm21.jpg", description:"大型装甲盾牌和额外装备套装，提升防御能力。", related:[], scale:"1/144", color:"-" },
+  { id:"mm22", name:"配件套组8（格斗武装/大爪）", series:"30MM", category:"配件", price:660, releaseDate:"2021-12", image:"images/mm22.jpg", description:"格斗武装和大爪装备套装，近战特化装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm23", name:"配件套组9（大型加农炮/爪型装备）", series:"30MM", category:"配件", price:660, releaseDate:"2022-03", image:"images/mm23.jpg", description:"大型加农炮和爪型装备套装，火力支援型装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm24", name:"配件套组10（大型燃料槽组件）", series:"30MM", category:"配件", price:858, releaseDate:"2022-11", image:"images/mm24.jpg", description:"大型燃料槽组件，增加机体续航和背包体积。", related:[], scale:"1/144", color:"-" },
+  { id:"mm25", name:"配件套组11（高机动型单元）", series:"30MM", category:"配件", price:660, releaseDate:"2022-06", image:"images/mm25.jpg", description:"高机动型单元装备套装，增加机体机动性。", related:[], scale:"1/144", color:"-" },
+  { id:"mm26", name:"配件套组12（追击者/侦察机）", series:"30MM", category:"配件", price:660, releaseDate:"2022-09", image:"images/mm26.jpg", description:"追击者小型无人机和侦察机装备套装。", related:[], scale:"1/144", color:"-" },
+  { id:"mm27", name:"配件套组13（步枪/大爪/大盾）", series:"30MM", category:"配件", price:660, releaseDate:"2023-03", image:"images/mm27.jpg", description:"步枪、大爪、大盾组合装备套装，全面作战装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm28", name:"配件套组14（多功能织物/多功能连接件）", series:"30MM", category:"配件", price:1078, releaseDate:"2023-12", image:"images/mm28.jpg", description:"多功能织物零件和连接件，提供柔性连接和扩展能力。", related:[], scale:"1/144", color:"-" },
+  { id:"mm29", name:"配件套组15（长程步枪/大剑）", series:"30MM", category:"配件", price:660, releaseDate:"2024-06", image:"images/mm29.jpg", description:"长程步枪和大剑组合装备套装。", related:[], scale:"1/144", color:"-" },
+  { id:"mm30", name:"配件套组16（复合单元）", series:"30MM", category:"配件", price:660, releaseDate:"2024-09", image:"images/mm30.jpg", description:"复合功能单元装备套装，多用途扩展装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm31", name:"突击单元 步枪/大型爪", series:"30MM", category:"配件", price:660, releaseDate:"2019-09", image:"images/mm31.jpg", description:"适用于30MM 1/144系列的自定义武器套装，包含了大型爪和突击步枪。", related:["mm01"], scale:"1/144", color:"-" },
+  { id:"mm32", name:"载具拓展包（水中探索机Ver.）", series:"30MM", category:"配件", price:1320, releaseDate:"2026-02", image:"images/mm32.jpg", description:"水中探索机载具拓展包，让机体具备水下行动能力。", related:[], scale:"1/144", color:"-" },
+  { id:"mm33", name:"eEXM-40 伊格莱特", series:"30MM", category:"机体", price:1320, releaseDate:"2025-09", image:"images/mm33.jpg", description:"30MM系列新机体伊格莱特，全新设计的新型EXM。", related:[], scale:"1/144", color:"白色" },
+  { id:"mm34", name:"bEXM-6 劳德诺瓦I", series:"30MM", category:"机体", price:1628, releaseDate:"2025-05", image:"images/mm34.jpg", description:"30MM系列机体劳德诺瓦I，新设计的大型机体。", related:[], scale:"1/144", color:"白色" },
+  { id:"mm35", name:"机战佣兵VI 境界天火 ARQUEBUS ADD VE-40A", series:"30MM", category:"机体", price:4180, releaseDate:"2025-12", image:"images/mm35.jpg", description:"《机战佣兵VI 境界天火》联名商品，ARQUEBUS ADD VE-40A机体。", related:["mm36"], scale:"1/144", color:"-" },
+  { id:"mm36", name:"机战佣兵VI 开明信仰", series:"30MM", category:"机体", price:5280, releaseDate:"2025-09", image:"images/mm36.jpg", description:"《机战佣兵VI 境界天火》联名商品，开明信仰机体。大型机体套件。", related:["mm35"], scale:"1/144", color:"-" },
+  { id:"mm37", name:"机战佣兵VI RUBICON RaD CC-3000 WRECKER CIRCUS", series:"30MM", category:"机体", price:3800, releaseDate:"2026-11", image:"images/mm37.jpg", description:"《机战佣兵VI 境界天火》联名商品，大型机体套件。", related:[], scale:"1/144", color:"-" },
+  { id:"mm38", name:"Extended Armament Beast (EXWILD)", series:"30MM", category:"配件", price:2200, releaseDate:"2026-04", image:"images/mm38.jpg", description:"扩展武装兽型组件，全新概念的野兽形态装备。", related:[], scale:"1/144", color:"-" },
+  { id:"mm39", name:"eEXM-S03H 弗雷斯提耶利", series:"30MM", category:"机体", price:1320, releaseDate:"2024-03", image:"images/mm39.jpg", description:"30MM系列新机体弗雷斯提耶利，全新设计。", related:[], scale:"1/144", color:"白色" },
+  { id:"mm40", name:"1/144 载具拓展包", series:"30MM", category:"配件", price:1320, releaseDate:"2026-10", image:"images/mm40.jpg", description:"30MM系列载具拓展包，提供额外的载具组件。", related:[], scale:"1/144", color:"-" },
+  // ==================== 30MS ====================
+  { id:"ms01", name:"SIS-G00 莉薛塔", series:"30MS", category:"素体", price:2530, releaseDate:"2021-08", image:"images/ms01.jpg", description:"30MS系列首款产品。白色短发，服装颜色为黑色和金黄色，风格偏向猫科风格。CV：天海由梨奈。", related:["ms02","ms03","ms13"], scale:"-", color:"白色/黑色/金黄" },
+  { id:"ms02", name:"SIS-A00 缇雅夏", series:"30MS", category:"素体", price:2530, releaseDate:"2021-09", image:"images/ms02.jpg", description:"金色短发，服装颜色为黑色和略显黯淡的红色，风格偏向鸟类风格，有一对黑色翅膀。CV：矶部花凛。", related:["ms01","ms03"], scale:"-", color:"黑色/红色" },
+  { id:"ms03", name:"SIS-A00 露露婕", series:"30MS", category:"素体", price:2530, releaseDate:"2021-10", image:"images/ms03.jpg", description:"褐色发色，服装颜色为灰白色和土黄色，风格悠闲有己见。CV：船户由里绘。", related:["ms01","ms02"], scale:"-", color:"灰白/土黄" },
+  { id:"ms04", name:"SIS-Gc69r 阿尔卡·卡尔提 四重奏模式", series:"30MS", category:"素体+武装", price:3500, releaseDate:"2022-01", image:"images/ms04.jpg", description:"本体+武装组合套装，四重奏模式。", related:["ms01"], scale:"-", color:"-" },
+  { id:"ms05", name:"SIS-Ac25g 法·法莉娜 领队形态", series:"30MS", category:"素体+武装", price:3500, releaseDate:"2022-02", image:"images/ms05.jpg", description:"本体+武装组合套装，领队形态。", related:["ms02"], scale:"-", color:"-" },
+  { id:"ms06", name:"SIS-Ac65n 帕瓦蕾莉·帕利顿 重装形态", series:"30MS", category:"素体+武装", price:3800, releaseDate:"2022-05", image:"images/ms06.jpg", description:"PB限定套件。蓝白色卷发，重装形态履带装备具有强大走破力。", related:["ms02"], scale:"-", color:"蓝白/灰绿" },
+  { id:"ms07", name:"SIS-Ac19b 席安娜·阿玛希亚 迅捷装", series:"30MS", category:"素体+武装", price:3500, releaseDate:"2022-05", image:"images/ms07.jpg", description:"浅蓝色卷发，服装颜色为蓝色、白色及深蓝色。爽朗善于社交。", related:["ms02"], scale:"-", color:"蓝色/白色" },
+  { id:"ms08", name:"SIS-T00 莉莉涅尔", series:"30MS", category:"素体", price:2530, releaseDate:"2022-11", image:"images/ms08.jpg", description:"金色长发，服装颜色为粉色和白色，兔子风格。表情丰富有活力。", related:["ms09","ms17"], scale:"-", color:"粉色/白色" },
+  { id:"ms09", name:"SIS-T00 莉莉涅[配色A]", series:"30MS", category:"素体", price:2530, releaseDate:"2022-12", image:"images/ms09.jpg", description:"白色短发，服装颜色为粉色和黑色，与莉莉涅尔类似风格。照顾莉莉涅尔。", related:["ms08","ms17"], scale:"-", color:"粉色/黑色" },
+  { id:"ms10", name:"SIS-D00 奈瓦莉亚[配色A]", series:"30MS", category:"素体", price:2530, releaseDate:"2023-02", image:"images/ms10.jpg", description:"白色长发，服装颜色为蓝灰色和紫色，恶魔和御姐风格。神秘妖艳的SISTER。", related:["ms18"], scale:"-", color:"蓝灰/紫色" },
+  { id:"ms11", name:"SIS-M00 伊莎娜[配色C]", series:"30MS", category:"素体", price:2530, releaseDate:"2023-08", image:"images/ms11.jpg", description:"白色短发，服装颜色为黑色、白色及橘红色，有一对白色翅膀。喜欢恶作剧、任性。", related:["ms10"], scale:"-", color:"黑白/橘红" },
+  { id:"ms12", name:"SIS-Gc11w 斯缇普拉·斯泰罗伊 大胆形态", series:"30MS", category:"素体+武装", price:3800, releaseDate:"2023-12", image:"images/ms12.png", description:"PB限定套件。浅黄色短发，太空活动探索设备。", related:["ms01"], scale:"-", color:"黄/黑/透明绿" },
+  { id:"ms13", name:"SIS-F00 尤菲雅", series:"30MS", category:"素体", price:2530, releaseDate:"2024-07", image:"images/ms13.jpg", description:"骑士风格设计，配合30MF系列推出。角色设计由BUNBUN（abec）担任。", related:["ms01"], scale:"-", color:"-" },
+  { id:"ms14", name:"SIS-Tc20g 兹琪露娜=提亚斯（纯真型）", series:"30MS", category:"素体+武装", price:3500, releaseDate:"2024-02", image:"images/ms14.jpg", description:"月兔形象，卡其色双马尾。纯真形态有辅助跳跃的推进装置。", related:["ms08","ms09"], scale:"-", color:"黑/金/透明黄" },
+  { id:"ms15", name:"SIS-Dc88w 艾列涅=艾丽艾瑞卡（优雅型）", series:"30MS", category:"素体+武装", price:3500, releaseDate:"2024-06", image:"images/ms15.jpg", description:"天使形象，金黄色发、白色羽翼。白色零件采用偏光素材成形。", related:["ms10"], scale:"-", color:"白色/金色" },
+  { id:"ms16", name:"SIS-Tc10m 瑞普蕾洛·普洛潘 诙谐装", series:"30MS", category:"素体+武装", price:3800, releaseDate:"2024-08", image:"images/ms16.jpg", description:"PB限定套件。30MS第四只兔子，采用T素体。", related:["ms08","ms09"], scale:"-", color:"-" },
+  { id:"ms17", name:"SIS-Dc75b 诺蒂莉卡·特拉蒂莉卡", series:"30MS", category:"素体+武装", price:3800, releaseDate:"2024-12", image:"images/ms17.png", description:"PB限定套件。", related:["ms08","ms09"], scale:"-", color:"-" },
+  { id:"ms18", name:"SIS-N00 苍丽", series:"30MS", category:"素体", price:2530, releaseDate:"2025-02", image:"images/ms18.jpg", description:"角色设计由韩国绘师Anmi担任。右肩鬼面零件可当成前发装在头部。", related:["ms10"], scale:"-", color:"-" },
+  { id:"ms19", name:"发型配件套组Vol.1", series:"30MS", category:"配件", price:600, releaseDate:"2021-12", image:"images/ms19.png", description:"30MS系列发型配件套组，可更换发型实现个性化。", related:["ms01"], scale:"-", color:"-" },
+  { id:"ms20", name:"发型配件套组Vol.2", series:"30MS", category:"配件", price:600, releaseDate:"2022-03", image:"images/ms20.png", description:"多种发型配件套组，扩展角色造型变化。", related:[], scale:"-", color:"-" },
+  { id:"ms21", name:"发型配件套组Vol.3", series:"30MS", category:"配件", price:600, releaseDate:"2022-06", image:"images/ms21.png", description:"第三弹发型配件套组，更多发型选择。", related:[], scale:"-", color:"-" },
+  { id:"ms22", name:"发型配件套组Vol.4", series:"30MS", category:"配件", price:600, releaseDate:"2022-09", image:"images/ms22.png", description:"第四弹发型配件套组。", related:[], scale:"-", color:"-" },
+  { id:"ms23", name:"可选身体配件 Alpha Sisters Phantasm", series:"30MS", category:"配件", price:2200, releaseDate:"2023-06", image:"images/ms23.jpg", description:"Alpha Sisters Phantasm可选身体配件，改变身体造型。", related:[], scale:"-", color:"-" },
+  { id:"ms24", name:"可选身体配件 Alpha Sisters Phantasm 2", series:"30MS", category:"配件", price:2200, releaseDate:"2025-09", image:"images/ms24.png", description:"Alpha Sisters Phantasm 2可选身体配件，多种配色。", related:[], scale:"-", color:"-" },
+  { id:"ms25", name:"可选身体配件 配色A", series:"30MS", category:"配件", price:1200, releaseDate:"2022-04", image:"images/ms25.jpg", description:"可选身体配件，肤色A版本。", related:[], scale:"-", color:"-" },
+  { id:"ms26", name:"可选身体配件 配色B", series:"30MS", category:"配件", price:1200, releaseDate:"2022-04", image:"images/ms26.png", description:"可选身体配件，肤色B版本。", related:[], scale:"-", color:"-" },
+  { id:"ms27", name:"可选身体配件 配色C", series:"30MS", category:"配件", price:1200, releaseDate:"2022-04", image:"images/ms27.png", description:"可选身体配件，肤色C版本。", related:[], scale:"-", color:"-" },
+  { id:"ms28", name:"和泉爱依", series:"30MS", category:"素体", price:3800, releaseDate:"2025-09", image:"images/ms28.jpg", description:"《偶像大师》联动角色，售价3800日元（未税）。", related:[], scale:"-", color:"-" },
+  { id:"ms29", name:"星井美希", series:"30MS", category:"素体", price:4600, releaseDate:"2025-09", image:"images/ms29.jpg", description:"《偶像大师》联动角色，售价4600日元（未税）。", related:[], scale:"-", color:"-" },
+  { id:"ms30", name:"小宫果穗", series:"30MS", category:"素体", price:3800, releaseDate:"2025-06", image:"images/ms30.jpg", description:"《偶像大师》联动角色。", related:[], scale:"-", color:"-" },
+  // ==================== 30MF ====================
+  { id:"mf01", name:"罗萨骑士", series:"30MF", category:"骑士", price:2420, releaseDate:"2024-06", image:"images/mf01.jpg", description:"30MF系列首款产品。洛桑帝国阵营骑士。包含作为基础的素体以及铠甲和武装零件的完整新手套组。", related:["mf02","mf03","mf05","mf06"], scale:"-", color:"红色/黑色" },
+  { id:"mf02", name:"利贝尔骑士", series:"30MF", category:"骑士", price:2420, releaseDate:"2024-06", image:"images/mf02.jpg", description:"30MF系列首款产品。利贝尔共和国阵营骑士。与罗萨骑士不同阵营设计。", related:["mf01","mf04","mf07","mf08"], scale:"-", color:"蓝色/白色" },
+  { id:"mf03", name:"罗萨巫师", series:"30MF", category:"巫师", price:2200, releaseDate:"2025-09", image:"images/mf03.jpg", description:"洛桑帝国阵营巫师。采用更纤细高挑的3号素体，雷属性元素核心。", related:["mf01","mf05"], scale:"-", color:"红/黑/紫" },
+  { id:"mf04", name:"利贝尔巫师", series:"30MF", category:"巫师", price:2200, releaseDate:"2025-07", image:"images/mf04.jpg", description:"利贝尔共和国阵营巫师。冰属性元素核心，3号素体。", related:["mf02","mf06"], scale:"-", color:"蓝/白/冰" },
+  { id:"mf05", name:"罗萨枪兵", series:"30MF", category:"枪兵", price:2420, releaseDate:"2025-05", image:"images/mf05.jpg", description:"洛桑帝国阵营枪兵。长枪装备的中距离战斗职业。", related:["mf01","mf03"], scale:"-", color:"红色/黑色" },
+  { id:"mf06", name:"利贝尔枪兵", series:"30MF", category:"枪兵", price:2420, releaseDate:"2025-04", image:"images/mf06.jpg", description:"利贝尔共和国阵营枪兵。与罗萨枪兵不同设计。", related:["mf02","mf04"], scale:"-", color:"蓝色/白色" },
+  { id:"mf07", name:"罗萨潜行者", series:"30MF", category:"潜行者", price:2200, releaseDate:"2025-05", image:"images/mf07.jpg", description:"洛桑帝国阵营潜行者。擅长隐秘行动的敏捷型职业。", related:["mf01"], scale:"-", color:"红色/黑色" },
+  { id:"mf08", name:"龙人骑士", series:"30MF", category:"骑士", price:2750, releaseDate:"2025-11", image:"images/mf08.jpg", description:"龙人族骑士，独特的龙人造型。售价2750日元（含税）。", related:["mf01"], scale:"-", color:"-" },
+  { id:"mf09", name:"利贝尔剑士", series:"30MF", category:"剑士", price:2420, releaseDate:"2026-01", image:"images/mf09.jpg", description:"利贝尔共和国阵营剑士。剑术专精的近战职业。", related:["mf02"], scale:"-", color:"蓝色/白色" },
+  { id:"mf10", name:"罗萨剑士", series:"30MF", category:"剑士", price:2420, releaseDate:"2026-03", image:"images/mf10.jpg", description:"洛桑帝国阵营剑士。", related:["mf01"], scale:"-", color:"红色/黑色" },
+  { id:"mf11", name:"死亡骑士", series:"30MF", category:"骑士", price:2750, releaseDate:"2026-04", image:"images/mf11.jpg", description:"高级职业死亡骑士。售价2750日元（含税）。", related:["mf01"], scale:"-", color:"-" },
+  { id:"mf12", name:"至高大骑士", series:"30MF", category:"骑士", price:3300, releaseDate:"2025-08", image:"images/mf12.jpg", description:"高级职业至高大骑士。售价3300日元（含税）。", related:["mf01"], scale:"-", color:"-" },
+  { id:"mf13", name:"大陆猎手", series:"30MF", category:"猎手", price:2200, releaseDate:"2025-10", image:"images/mf13.jpg", description:"大陆猎手职业。", related:["mf02"], scale:"-", color:"-" },
+  { id:"mf14", name:"进阶装甲（罗萨骑士）", series:"30MF", category:"配件", price:700, releaseDate:"2024-08", image:"images/mf14.jpg", description:"罗萨骑士进阶装甲升级套件。", related:["mf01"], scale:"-", color:"-" },
+  { id:"mf15", name:"进阶装甲（利贝尔骑士）", series:"30MF", category:"配件", price:700, releaseDate:"2024-08", image:"images/mf15.jpg", description:"利贝尔骑士进阶装甲升级套件。", related:["mf02"], scale:"-", color:"-" },
+  { id:"mf16", name:"进阶装甲（罗萨巫师）", series:"30MF", category:"配件", price:700, releaseDate:"2025-09", image:"images/mf16.jpg", description:"罗萨巫师进阶装甲升级套件。", related:["mf03"], scale:"-", color:"-" },
+  { id:"mf17", name:"进阶装甲（罗萨术士）", series:"30MF", category:"配件", price:700, releaseDate:"2025-09", image:"images/mf17.jpg", description:"罗萨术士进阶装甲升级套件。", related:["mf03"], scale:"-", color:"-" },
+  { id:"mf18", name:"进阶装甲（罗萨附魔师）", series:"30MF", category:"配件", price:700, releaseDate:"2025-09", image:"images/mf18.jpg", description:"罗萨附魔师进阶装甲升级套件。", related:["mf03"], scale:"-", color:"-" },
+  { id:"mf19", name:"道具商店1", series:"30MF", category:"配件", price:800, releaseDate:"2024-08", image:"images/mf19.jpg", description:"冒险道具商店第一弹，包含多种冒险道具和装备。", related:[], scale:"-", color:"-" },
+  { id:"mf20", name:"道具商店2", series:"30MF", category:"配件", price:800, releaseDate:"2024-11", image:"images/mf20.jpg", description:"冒险道具商店第二弹，扩展道具选择。", related:[], scale:"-", color:"-" },
+  { id:"mf21", name:"道具商店3", series:"30MF", category:"配件", price:800, releaseDate:"2025-02", image:"images/mf21.jpg", description:"冒险道具商店第三弹。", related:[], scale:"-", color:"-" },
+  { id:"mf22", name:"道具商店4（任务配件）", series:"30MF", category:"配件", price:800, releaseDate:"2025-09", image:"images/mf22.jpg", description:"冒险道具商店第四弹，任务配件套装。", related:[], scale:"-", color:"-" },
+  { id:"mf23", name:"道具商店5（武术配件）", series:"30MF", category:"配件", price:1100, releaseDate:"2025-12", image:"images/mf23.jpg", description:"冒险道具商店第五弹，武术配件套装。", related:[], scale:"-", color:"-" },
+  { id:"mf24", name:"道具商店6（金/银配件）", series:"30MF", category:"配件", price:1320, releaseDate:"2026-03", image:"images/mf24.jpg", description:"冒险道具商店第六弹，金色和银色配件套装。", related:[], scale:"-", color:"-" },
+  { id:"mf25", name:"利贝尔牧师", series:"30MF", category:"牧师", price:2200, releaseDate:"2025-12", image:"images/mf25.jpg", description:"神职人员/牧师职业，治疗和支援型角色。", related:[], scale:"-", color:"-" },
+  { id:"mf26", name:"罗萨术士", series:"30MF", category:"术士", price:2200, releaseDate:"2026-02", image:"images/mf26.jpg", description:"罗萨帝国阵营术士。", related:["mf04"], scale:"-", color:"蓝色/白色" },
+  { id:"mf27", name:"罗萨附魔师", series:"30MF", category:"附魔师", price:2200, releaseDate:"2026-05", image:"images/mf27.jpg", description:"罗萨帝国阵营附魔师。", related:["mf04"], scale:"-", color:"蓝色/白色" },
+  { id:"mf28", name:"建筑组件 城墙", series:"30MF", category:"场景", price:2200, releaseDate:"2025-06", image:"images/mf28.png", description:"30MF场景组件，城墙模型。用于搭建战斗场景。", related:[], scale:"-", color:"-" },
+  { id:"mf29", name:"建筑组件 塔楼", series:"30MF", category:"场景", price:2200, releaseDate:"2025-08", image:"images/mf29.png", description:"30MF场景组件，塔楼模型。", related:[], scale:"-", color:"-" },
+  { id:"mf30", name:"进阶装甲（罗萨堡垒卫士）", series:"30MF", category:"配件", price:1100, releaseDate:"2025-06", image:"images/mf30.jpg", description:"罗萨堡垒卫士进阶装甲套件。", related:["mf05"], scale:"-", color:"-" },
+];
+
+// ============================================================
+// 应用逻辑
+// ============================================================
+let currentSeries = 'all';
+let currentSubCategory = 'all';
+let searchQuery = '';
+let activeFilter = '';
+
+const grid = document.getElementById('grid');
+const stats = document.getElementById('stats');
+const subFilters = document.getElementById('subFilters');
+const searchInput = document.getElementById('search');
+const modalOverlay = document.getElementById('modalOverlay');
+const modal = document.getElementById('modal');
+const modalHeader = document.getElementById('modalHeader');
+const modalBody = document.getElementById('modalBody');
+const modalFooter = document.getElementById('modalFooter');
+
+function getCategories(series) {
+  const cats = new Set();
+  PRODUCTS.forEach(p => {
+    if (series === 'all' || p.series === series) cats.add(p.category);
+  });
+  return Array.from(cats).sort();
+}
+
+function renderSubFilters() {
+  const cats = getCategories(currentSeries);
+  let html = '<div class="sub-chip active" data-cat="all">全部分类</div>';
+  cats.forEach(c => {
+    html += `<div class="sub-chip" data-cat="${c}">${c}</div>`;
+  });
+  subFilters.innerHTML = html;
+  document.querySelectorAll('.sub-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.sub-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentSubCategory = chip.dataset.cat;
+      render();
+    });
+  });
+}
+
+function filterProducts() {
+  let result = PRODUCTS;
+  if (currentSeries !== 'all') {
+    result = result.filter(p => p.series === currentSeries);
+  }
+  if (currentSubCategory !== 'all') {
+    result = result.filter(p => p.category === currentSubCategory);
+  }
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+    result = result.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.id.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.color.toLowerCase().includes(q) ||
+      (p.description && p.description.toLowerCase().includes(q))
+    );
+  }
+  if (activeFilter === 'upcoming') {
+    const now = new Date();
+    const currentYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    result = result.filter(p => p.releaseDate >= currentYM);
+  }
+  if (activeFilter === 'accessory') {
+    result = result.filter(p => p.category === '配件' || p.category === '场景');
+  }
+  return result;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '未知';
+  if (dateStr.length === 7) return dateStr.replace('-', '年') + '月';
+  if (dateStr.length === 10) {
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+  }
+  return dateStr;
+}
+
+function getSeriesClass(series) {
+  if (series === '30MM') return 'badge-mm';
+  if (series === '30MS') return 'badge-ms';
+  if (series === '30MF') return 'badge-mf';
+  return '';
+}
+
+function getSeriesColor(series) {
+  if (series === '30MM') return 'var(--mm)';
+  if (series === '30MS') return 'var(--ms)';
+  if (series === '30MF') return 'var(--mf)';
+  return '#888';
+}
+
+function getPlaceholderEmoji(series) {
+  if (series === '30MM') return '&#129302;'; // robot
+  if (series === '30MS') return '&#128520;'; // girl
+  if (series === '30MF') return '&#9876;'; // sword
+  return '&#127912;';
+}
+
+function render() {
+  const filtered = filterProducts();
+  const sorted = filtered.sort((a, b) => a.releaseDate.localeCompare(b.releaseDate));
+  
+  if (sorted.length === 0) {
+    grid.innerHTML = `
+      <div class="no-results">
+        <div class="no-results-icon">&#128269;</div>
+        <p>没有找到匹配的产品</p>
+        <p>请尝试其他搜索词或筛选条件</p>
+      </div>
+    `;
+  } else {
+    grid.innerHTML = sorted.map(p => `
+      <div class="card" onclick="openModal('${p.id}')">
+        <div class="card-img-wrap">
+          ${p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy">` : `<div class="placeholder-img">${getPlaceholderEmoji(p.series)}</div>`}
+          <div class="series-badge ${getSeriesClass(p.series)}">${p.series}</div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${p.name}</div>
+          <div class="card-meta">
+            <div class="card-meta-row">
+              <span>${formatDate(p.releaseDate)}</span>
+              <span class="card-price">${p.price ? p.price.toLocaleString() + '円' : '价格未知'}</span>
+            </div>
+            <div class="card-tag">${p.category}${p.scale ? ' · ' + p.scale : ''}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  const total = PRODUCTS.length;
+  stats.innerHTML = `共 ${total} 件产品 | 当前显示 ${sorted.length} 件${currentSeries !== 'all' ? ' · ' + currentSeries : ''}${currentSubCategory !== 'all' ? ' · ' + currentSubCategory : ''}${searchQuery ? ' · 搜索: ' + searchQuery : ''}`;
+}
+
+function openModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  
+  modalHeader.innerHTML = `
+    ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="placeholder-img" style="width:100px;height:100px;font-size:2.5rem;">${getPlaceholderEmoji(p.series)}</div></div>`}
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+  `;
+  
+  const relatedHtml = p.related && p.related.length > 0
+    ? `<div class="modal-section"><h3>关联产品</h3><div class="related-list">${p.related.map(rid => {
+        const rp = PRODUCTS.find(x => x.id === rid);
+        return rp ? `<div class="related-chip" onclick="openModal('${rp.id}')">${rp.name}</div>` : '';
+      }).join('')}</div></div>`
+    : '';
+  
+  modalBody.innerHTML = `
+    <div class="modal-title">${p.name}</div>
+    <div class="modal-subtitle">${p.id} · ${p.series} · ${p.category}</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">发售日期</div><div class="info-value">${formatDate(p.releaseDate)}</div></div>
+      <div class="info-item"><div class="info-label">价格</div><div class="info-value">${p.price ? p.price.toLocaleString() + ' 日元' : '未知'}</div></div>
+      <div class="info-item"><div class="info-label">系列</div><div class="info-value" style="color:${getSeriesColor(p.series)}">${p.series}</div></div>
+      <div class="info-item"><div class="info-label">分类</div><div class="info-value">${p.category}</div></div>
+      ${p.scale ? `<div class="info-item"><div class="info-label">比例</div><div class="info-value">${p.scale}</div></div>` : ''}
+      ${p.color ? `<div class="info-item"><div class="info-label">配色</div><div class="info-value">${p.color}</div></div>` : ''}
+    </div>
+    <div class="modal-section"><h3>产品描述</h3><p>${p.description || '暂无描述'}</p></div>
+    ${relatedHtml}
+  `;
+  
+  modalFooter.innerHTML = `
+    <a href="https://bandaihobbysite.cn/index/index/detail/id/${p.id.replace(/[^0-9]/g,'')}" target="_blank" class="external-link" style="opacity:0.5;pointer-events:none;" onclick="alert('产品链接需要手动更新至对应编号');return false;">
+      在万代 Hobby 官网查看 &#8599;
+    </a>
+  `;
+  
+  modalOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+modalOverlay.addEventListener('click', e => {
+  if (e.target === modalOverlay) closeModal();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Filter chips
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    
+    if (chip.dataset.series) {
+      currentSeries = chip.dataset.series;
+      activeFilter = '';
+      currentSubCategory = 'all';
+      renderSubFilters();
+    } else if (chip.dataset.filter) {
+      activeFilter = chip.dataset.filter;
+      if (activeFilter === 'accessory') currentSeries = 'all';
+    }
+    render();
+  });
+});
+
+// Search
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+// Initialize
+renderSubFilters();
+render();
+</script>
+</body>
+</html>
